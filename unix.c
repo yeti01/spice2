@@ -184,7 +184,7 @@ zero4_( array, length )
 	char		*array;
 	unsigned	*length;
 {
-	mclear( array, *length * 4 );
+	mclear( array, *length * 8 );
 }
 
 
@@ -208,7 +208,7 @@ copy4_( from, to, length )
 	char		*from, *to;
 	int		*length;
 {
-	mcopy( from, to, *length * 4 );
+	mcopy( from, to, *length * 8 );
 }
 
 

@@ -1,7 +1,7 @@
 CXX = gcc
 CXXFLAGS = -g -O0
 FC = gfortran
-FFLAGS = -g -O0 -std=legacy
+FFLAGS = -g -O0 -finteger-4-integer-8 -std=legacy
 
 OBJS = spice.o unix.o
 
