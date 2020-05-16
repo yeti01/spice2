@@ -60,11 +60,11 @@ xdate_( chr )
         month = itoc( buffer->tm_mon + 1 );   /* month is zero based */
         while( *month )
                 *chr++ = *month++;
-        *chr++ = '\/';
+        *chr++ = '/';
         day = itoc( buffer->tm_mday );
         while( *day )
                 *chr++ = *day++;
-        *chr++ = '\/';
+        *chr++ = '/';
         year = itoc( buffer->tm_year );
         while( *year )
                 *chr++ = *year++;
@@ -100,7 +100,7 @@ dblsgl_( cstar16, numwds )
 	float	*cstar8;
 	int	i;
 
-	return;
+	return( 0 );
 	cstar8 = (float *) cstar16;
 	for ( i = 0; i < (*numwds)/4; i++ ) {
 		cstar8[ i ] = cstar16[ 2*i ];
@@ -109,17 +109,16 @@ dblsgl_( cstar16, numwds )
 
 
 #include <stdio.h>
-FILE	*rawfile;  /* pointer to raw file  */
-
+static	FILE	*rawfile;	/* pointer to raw file  */
+static	int	xargc;		/* number of arguments in UNIX command */
+static	char	**xargv;	/* pointer to an array of pointers to
+				arguments in UNIX command line  */
 /*
  * Open raw data file.  Return 1 if file is opened,
  *  return 0 if file is not opened
  */
 iopraw_()
 {
-	extern	int	xargc;	/* number of arguments in UNIX command */
-	extern	char	**xargv;/* pointer to an array of pointers to
-				arguments in UNIX command line  */
 	int	i;
 	char	*filename = NULL;/* name of raw file */
 
@@ -233,11 +232,6 @@ copy16_( from, to, length )
  * sccsid @(#)unix.c	6.1	(Splice2/Berkeley) 3/15/83
  */
 
-#ifndef lint
-#define VAXUNIXASM
-#endif
-#define VAXMAXSIZE ((2<<15) - 1);
-
 /*
  * mclear - clear memory.
  */
@@ -245,18 +239,9 @@ mclear( data, size )
 	char		*data;
 	int		size;
 {
-#ifdef	VAXUNIXASM
-	register int	i = VAXMAXSIZE;
-
-	for ( ; size > i; size -= i, data += i ) {
-		asm( "	movc5 $0,*4(ap),$0,r11,*4(ap)" );
-	}
-	asm( "	movc5 $0,*4(ap),$0,8(ap),*4(ap)" );
-#else
 	for ( ; size > 0; size--, data++ ) {
 		*data = '\0';
 	}
-#endif
 }
 
 
@@ -269,36 +254,6 @@ mcopy( from, to, size )
 	char		*from,	*to;
 	int		size;
 {
-#ifdef	VAXUNIXASM
-	register int		i = VAXMAXSIZE;
-
-	if ( size < i ) {
-		asm( "	movc3 12(ap),*4(ap),*8(ap)" );
-		return;
-	}
-	else if ( from >= to ) {
-		for ( ; size > i; size -= i, to += i, from += i ) {
-			asm( "	movc3 r11,*4(ap),*8(ap)" );
-		}
-		asm( "	movc3 12(ap),*4(ap),*8(ap)" );
-		return;
-	}
-	else {
-		to   += size;
-		from += size;
-		size -= i;
-		for ( ; size > 0; size -= i ) {
-			to   -= i;
-			from -= i;
-			asm( "	movc3 r11,*4(ap),*8(ap)" );
-		}
-		size += i;
-		to   -= size;
-		from -= size;
-		asm( "	movc3 12(ap),*4(ap),*8(ap)" );
-		return;
-	}
-#else
 	if ( from >= to ) {
 		for ( ; size > 0; size-- ) {
 			*to++ = *from++;
@@ -311,7 +266,6 @@ mcopy( from, to, size )
 			*--to = *--from;
 		}
 	}
-#endif
 }
 
 
@@ -324,131 +278,10 @@ mcmp( from, to, size )
 	char		*from,	*to;
 	int		size;
 {
-#ifdef	VAXUNIXASM
-	register int	i = VAXMAXSIZE;
-
-	for ( ; size > i; size -= i, to += i, from += i ) {
-		asm( "	cmpc3 r11,*4(ap),*8(ap)" );
-		asm( "	jeql L_zot_" );
-		asm( "	ret" );
-		asm( "L_zot_:" );
-	}
-	asm( "	cmpc3 12(ap),*4(ap),*8(ap)" );
-#else
 	for ( ; size > 0; size-- ) {
 		if ( *to++ != *from++ ) {
 			return( 1 );
 		}
 	}
 	return( 0 );
-#endif
 }
-
-
-#ifdef MISCTEST
-
-#define TESTSIZE1   31683
-#define TESTSIZE2  147755
-#define TESTSIZE3   69683
-
-#define MISCASSERT(cond) {if(!(cond))\
-printf("Assertion botched line %d: cond\n", __LINE__); }
-
-/*
- * Exercise for misc routines to check that they really work.
- */
-main()
-{
-	int		i,	j;
-	static	char	buff1[ TESTSIZE1 ],	buff2[ TESTSIZE1 ];
-	static	char	buff3[ TESTSIZE2 ],	buff4[ TESTSIZE2 ];
-
-	/*
-	 * First check that everything is zeroed.
-	 *  Assume TESTSIZE1 < TESTSIZE3 < TESTSIZE2
-	 */
-	MISCASSERT( mcmp(buff1, buff2, TESTSIZE1) == 0 );
-	MISCASSERT( mcmp(buff3, buff4, TESTSIZE2) == 0 );
-	MISCASSERT( mcmp(buff1, buff3, TESTSIZE1) == 0 );
-	/*
-	 * Set to all ones, check, clear, check
-	 */
-	for ( i = 0; i < TESTSIZE1; i++ ) {
-		buff1[ i ] = -1;
-	}
-	MISCASSERT( mcmp(buff1, buff2, TESTSIZE1) != 0 );
-	MISCASSERT( mcmp(buff1, buff3, TESTSIZE1) != 0 );
-	mcopy( buff1, buff2, TESTSIZE1 );
-	MISCASSERT( mcmp(buff1, buff2, TESTSIZE1) == 0 );
-	MISCASSERT( mcmp(buff3, buff4, TESTSIZE2) == 0 );
-	for ( i = 0; i < TESTSIZE2; i++ ) {
-		buff3[ i ] = -1;
-	}
-	MISCASSERT( mcmp(buff3, buff4, TESTSIZE2) != 0 );
-	MISCASSERT( mcmp(buff1, buff2, TESTSIZE1) == 0 );
-	MISCASSERT( mcmp(buff1, buff3, TESTSIZE1) == 0 );
-	mcopy( buff3, buff4, TESTSIZE2 );
-	MISCASSERT( mcmp(buff3, buff4, TESTSIZE2) == 0 );
-	MISCASSERT( mcmp(buff1, buff4, TESTSIZE1) == 0 );
-
-	mclear( buff3, TESTSIZE2 );
-	mcopy( buff4, buff3, TESTSIZE2 );
-	MISCASSERT( mcmp(buff3, buff4, TESTSIZE2) == 0 );
-	MISCASSERT( mcmp(buff1, buff3, TESTSIZE1) == 0 );
-
-	mclear( buff2, TESTSIZE1 );
-	MISCASSERT( mcmp(buff3, buff4, TESTSIZE2) == 0 );
-	mclear( buff3, TESTSIZE1 );
-	MISCASSERT( mcmp(buff2, buff3, TESTSIZE1) == 0 );
-	mcopy( buff1, buff3 + TESTSIZE3, TESTSIZE1 );
-	MISCASSERT( mcmp(buff1, buff3 + TESTSIZE3, TESTSIZE1) == 0 );
-	mclear( buff3 + TESTSIZE3, TESTSIZE1 );
-	MISCASSERT( mcmp(buff2, buff3 + TESTSIZE3, TESTSIZE1) == 0 );
-	mcopy( buff3 + TESTSIZE3, buff3, TESTSIZE1 );
-	MISCASSERT( mcmp(buff2, buff3, TESTSIZE1) == 0 );
-	mcopy( buff1, buff3, TESTSIZE1 );
-	mcopy( buff1, buff3 + TESTSIZE3, TESTSIZE1 );
-	mcopy( buff3 + TESTSIZE3, buff3, TESTSIZE1 );
-	MISCASSERT( mcmp(buff1, buff3, TESTSIZE1) == 0 );
-	/*
-	 * Repeat with sequence of numbers in mem locs.
-	 */
-	for ( i = 0; i < TESTSIZE1; i++ ) {
-		buff1[ i ] = i;
-	}
-	MISCASSERT( mcmp(buff1, buff2, TESTSIZE1) != 0 );
-	MISCASSERT( mcmp(buff1, buff3, TESTSIZE1) != 0 );
-	mcopy( buff1, buff2, TESTSIZE1 );
-	MISCASSERT( mcmp(buff1, buff2, TESTSIZE1) == 0 );
-	MISCASSERT( mcmp(buff3, buff4, TESTSIZE2) == 0 );
-	for ( i = 0; i < TESTSIZE2; i++ ) {
-		buff3[ i ] = i;
-	}
-	MISCASSERT( mcmp(buff3, buff4, TESTSIZE2) != 0 );
-	MISCASSERT( mcmp(buff1, buff2, TESTSIZE1) == 0 );
-	MISCASSERT( mcmp(buff1, buff3, TESTSIZE1) == 0 );
-	mcopy( buff3, buff4, TESTSIZE2 );
-	MISCASSERT( mcmp(buff3, buff4, TESTSIZE2) == 0 );
-	MISCASSERT( mcmp(buff1, buff4, TESTSIZE1) == 0 );
-
-	mclear( buff3, TESTSIZE2 );
-	mcopy( buff4, buff3, TESTSIZE2 );
-	MISCASSERT( mcmp(buff3, buff4, TESTSIZE2) == 0 );
-	MISCASSERT( mcmp(buff1, buff3, TESTSIZE1) == 0 );
-
-	mclear( buff2, TESTSIZE1 );
-	MISCASSERT( mcmp(buff3, buff4, TESTSIZE2) == 0 );
-	mclear( buff3, TESTSIZE1 );
-	MISCASSERT( mcmp(buff2, buff3, TESTSIZE1) == 0 );
-	mcopy( buff1, buff3 + TESTSIZE3, TESTSIZE1 );
-	MISCASSERT( mcmp(buff1, buff3 + TESTSIZE3, TESTSIZE1) == 0 );
-	mclear( buff3 + TESTSIZE3, TESTSIZE1 );
-	MISCASSERT( mcmp(buff2, buff3 + TESTSIZE3, TESTSIZE1) == 0 );
-	mcopy( buff3 + TESTSIZE3, buff3, TESTSIZE1 );
-	MISCASSERT( mcmp(buff2, buff3, TESTSIZE1) == 0 );
-	mcopy( buff1, buff3, TESTSIZE1 );
-	mcopy( buff1, buff3 + TESTSIZE3, TESTSIZE1 );
-	mcopy( buff3 + TESTSIZE3, buff3, TESTSIZE1 );
-	MISCASSERT( mcmp(buff1, buff3, TESTSIZE1) == 0 );
-}
-#endif
