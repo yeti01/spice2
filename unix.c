@@ -113,6 +113,16 @@ static	FILE	*rawfile;	/* pointer to raw file  */
 static	int	xargc;		/* number of arguments in UNIX command */
 static	char	**xargv;	/* pointer to an array of pointers to
 				arguments in UNIX command line  */
+
+void __attribute__((constructor))
+xinit( argc, argv )
+	int	argc;
+	char	**argv;
+{
+	xargc = argc;
+	xargv = argv;
+}
+
 /*
  * Open raw data file.  Return 1 if file is opened,
  *  return 0 if file is not opened
