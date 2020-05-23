@@ -72,12 +72,12 @@ xdate_( chr )
 /*
  * itoc
  */
+static	char string[3];
+
 char  *
 itoc( number )
 	int	number;
 {
-	char string[3];
-
 	/*
 	 * make a two digit string from the least significant digits of number
 	 */
