@@ -679,7 +679,7 @@
                The shape of the waveform  is  described  by  the  following
           equation:
 
-              value = VO + VA*sine((twopi*FC*time) + MDI*sine(twopi*FS*time))
+          value = VO + VA*sine((twopi*FC*time) + MDI*sine(twopi*FS*time))
 
 
           7.  SEMICONDUCTOR DEVICES
@@ -1281,7 +1281,7 @@
           CHGTOL=x resets the charge tolerance of the program.  The default
                    value is 1.0E-14.
           PIVTOL=x resets the absolute minimum value for a matrix entry
-                   to be accepted as a pivot.  The default value is 1.0E-13.
+                   to be accepted as a pivot. The default value is 1.0E-13.
           PIVREL=x resets the relative ratio between the largest column
 	           entry and an acceptable pivot value. The default value
 		   is 1.0E-3.  In the numerical pivoting algorithm the
@@ -2143,8 +2143,8 @@
 
                                    qVB'E'
 		                   ______
-                   d         IS    NF*kT             VB'E' -MJ
-          CBE = _______( TFF*__( e       -1))+CJE( 1-_____)
+                   d         IS    NF*kT             VB'E'  -MJ
+          CBE = _______( TFF*__( e       -1))+CJE( 1-_____ )
                 d VB'E'      QB                       VJE
 
           Where:
@@ -2164,8 +2164,8 @@
 
                            qVB'C'
                            ______
-                     qIS     kT            VB'C' -MJC
-          CBC = TR (_____ e      )+CJC ( 1-_____)
+                     qIS     kT            VB'C'  -MJC
+          CBC = TR (_____ e      )+CJC ( 1-_____ )
                     NR*kT                   VJC
 
                        VC'S' -MJS
@@ -2186,20 +2186,21 @@
 
                      4kT
                 2   ____
-          IRBB'   = RBB' DELTA f
-                                |
-                                |
-                                |
-                     4kT        |
-                2    ___        |
-            IRC   =  RC  DELTA f|   Thermal nois*
-                                |
-                                |
-                                |
-                     4kT        |KF*IB**AF
-                2   ____        |_________
-            IRE   = 2REB DELTA f+    f     DELTA f
+          IRBB'   = RBB' DELTA f |
+                                 |
+                                 |
+                     4kT         |
+                2    ___         |
+            IRC   =  RC  DELTA f |  Thermal noise
+                                 |
+                                 |
+                     4kT         |
+                2    ___         |
+            IRE   =  RE  DELTA f |
 
+                                 KF*IB**AF
+                2                _________
+            IBN   = 2qIB DELTA f+    f     DELTA f
 
           Note: The first term is shot noise and the second term is flicker
           noise.
@@ -2214,20 +2215,20 @@
           All junctions have dependences identical  to the diode model  but
           all N factors are considered equal 1.
 
-                              T  XTB
+                             T    XTB
           BF and  BR go as (____)
                             TNOM
 
           when NF=1.  This is done through appropriate changes in  BF , BR
           and ISE, ISC according to the following equations respectively:
 
-                                           T  XTB
+                                          T    XTB
               BF' (or BR') = BF (or BR)*(____)
 	                                 TNOM 
 
                                                               qEG T-TNOM
                                                               ___ ______
-                                              T  (XTI-XTB)    Nk  T*TNOM
+                                             T   (XTI-XTB)    Nk  T*TNOM
             ISE' (or ISC') = ISE (or ISC) *(____)          *e
                                             TNOM
 
