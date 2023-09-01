@@ -2076,7 +2076,7 @@
                   V = I(VIN1)*I(VIN2)
 
 
-          12. APPENDIX C: BIPOLAR MODEL EQUATIONS
+          12.  APPENDIX C:  BIPOLAR MODEL EQUATIONS
 
           (G    terms omitted)
             min
@@ -2084,7 +2084,7 @@
           Acknowledgment: This section has been contributed by Bill  Bider-
           mann at HP labs.
 
-          12.1  D.C. MODEL
+          12.1.  D.C. MODEL
 
                      qVB'E'    qVB'C'        qVB'C'           qVB'C'
                      ______    ______        ______           ______
@@ -2139,7 +2139,7 @@
           beta  rolloff  with  IC.   ISE,  ISC, NE and NC determine the low
           current beta rolloff with IC.
 
-          12.2  A.C. MODEL
+          12.2.  A.C. MODEL
 
                                    qVB'E'
 		                   ______
@@ -2182,7 +2182,7 @@
 
           when V > FC*phi   ( For CSS assumes FC = 0 )
 
-          12.3  NOISE MODEL
+          12.3.  NOISE MODEL
 
                      4kT
                 2   ____
@@ -2210,7 +2210,7 @@
 
           Note: This is shot noise.
 
-          12.4  TEMPERATURE EFFECTS
+          12.4.  TEMPERATURE EFFECTS
 
           All junctions have dependences identical  to the diode model  but
           all N factors are considered equal 1.
@@ -2232,7 +2232,7 @@
             ISE' (or ISC') = ISE (or ISC) *(____)          *e
                                             TNOM
 
-          12.5  EXCESS PHASE
+          12.5.  EXCESS PHASE
 
           This is a  delay  (linear  phase)  in  the  gm  generator  in  AC
           analysis.   It  is also used in transient analysis using a Bessel
@@ -2244,8 +2244,7 @@
                                       2piTF
 
 
-          12.   APPENDIX  D:    ALTER  STATEMENT  AND  THE  SOURCE-STEPPING
-          METHOD
+          13.  APPENDIX D:  ALTER STATEMENT AND THE SOURCE-STEPPING METHOD
 
                The ALTER statement allows SPICE to run with altered circuit
           parameters.
