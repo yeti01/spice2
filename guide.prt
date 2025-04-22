@@ -1516,8 +1516,7 @@
               HD2  - the magnitude of the frequency component 2*f1 assuming
                      that f2 is not present.
               HD3  - the magnitude of the frequency component 3*f1 assuming
-          that f2
-                     is not present.
+                     that f2 is not present.
               SIM2 - the magnitude of the frequency component f1 + f2.
               DIM2 - the magnitude of the frequency component f1 - f2.
               DIM3 - the magnitude of the frequency component 2*f1 - f2.
