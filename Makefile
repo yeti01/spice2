@@ -1,7 +1,7 @@
 CC = gcc
-CCFLAGS = -g -O0 -Wno-implicit-int -Wno-implicit-function-declaration
+CFLAGS = -g -O0 -Wno-implicit-int -Wno-implicit-function-declaration -Wno-return-type -Wno-pointer-to-int-cast
 FC = gfortran
-FFLAGS = -g -O0 -finteger-4-integer-8 -std=legacy
+FFLAGS = -g -O0 -finteger-4-integer-8 -std=legacy -Wno-argument-mismatch 
 
 OBJS = spice.o unix.o
 
@@ -10,11 +10,11 @@ all: spice
 spice: $(OBJS)
 	$(FC) $(OBJS) -o spice
 
-%.o: %.f
-	$(FC) -c $(FFLAGS) $*.f -o $*.o 
+spice.o: spice.f
+	$(FC) -c $(FFLAGS) spice.f -o spice.o 
 
-%.o: %.c
-	$(CC) $(CCFLAGS) -c $*.c -o $*.o
+unix.o: unix.c
+	$(CC) $(CFLAGS) -c unix.c -o unix.o
 
 clean:
 	rm -f $(OBJS) spice

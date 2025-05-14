@@ -109,6 +109,7 @@ dblsgl_( cstar16, numwds )
 
 
 #include <stdio.h>
+#include <stdlib.h>
 static	FILE	*rawfile;	/* pointer to raw file  */
 static	int	xargc;		/* number of arguments in UNIX command */
 static	char	**xargv;	/* pointer to an array of pointers to
